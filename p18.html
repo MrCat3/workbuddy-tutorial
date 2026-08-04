@@ -78,12 +78,15 @@ figcaption{font-size:13px;color:var(--ink2);margin-top:10px;letter-spacing:.05em
 #toTop{position:fixed;right:28px;bottom:32px;width:46px;height:46px;border-radius:50%;background:var(--ink);color:var(--paper);border:none;font-size:18px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s;z-index:50}
 #toTop.show{opacity:.85;pointer-events:auto}
 #tocToggle{display:none}
+.toc-mask{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(40,35,27,.35);z-index:70}
+body.toc-open .toc-mask{display:block}
 @media(max-width:980px){
-  nav.toc{position:fixed;left:-300px;z-index:80;background:var(--paper);transition:left .3s;box-shadow:8px 0 30px rgba(0,0,0,.15);width:280px}
+  nav.toc{position:fixed;left:-100%;top:0;z-index:80;background:var(--paper);transition:left .3s;box-shadow:8px 0 30px rgba(0,0,0,.15);width:min(82vw,300px);height:100vh;height:100dvh}
   nav.toc.open{left:0}
   main{padding:0 24px 100px}
   #tocToggle{display:block;position:fixed;left:16px;top:14px;z-index:90;background:var(--verm);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:14px;cursor:pointer}
   .hero h1{font-size:32px}
+  #toTop{display:none}
 }
 .page{display:none}
 .page.active{display:block}
@@ -189,8 +192,11 @@ main{padding-bottom:80px}
   function onScroll(){top.classList.toggle('show',document.documentElement.scrollTop>600);}
   window.addEventListener('scroll',onScroll,{passive:true});onScroll();
   top.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
-  tg.onclick=function(e){e.stopPropagation();toc.classList.toggle('open');};
-  document.addEventListener('click',function(e){if(!toc.contains(e.target))toc.classList.remove('open');});
+  var mask=document.createElement('div');mask.className='toc-mask';document.body.appendChild(mask);
+  function setToc(open){toc.classList.toggle('open',open);document.body.classList.toggle('toc-open',open);tg.textContent=open?'收起':'目录';}
+  tg.onclick=function(e){e.stopPropagation();setToc(!toc.classList.contains('open'));};
+  mask.onclick=function(){setToc(false);};
+  document.addEventListener('click',function(e){if(!toc.contains(e.target)&&e.target!==tg)setToc(false);});
 })();
 </script>
 </body>
