@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 8 节 搞懂连接器：绑定微信，手机上也能指挥它 · WorkBuddy 小白教程</title>
+<style>
+
+:root{
+  --paper:#f7f2e9; --paper2:#fffcf5; --ink:#28231b; --ink2:#5c5443;
+  --verm:#c2452d; --verm-soft:#f6e4de; --teal:#17655a; --teal-soft:#e4efec;
+  --amber:#9a6a1c; --amber-soft:#f8efdc; --line:#e6dcc8; --card:#fffdf8;
+  --serif:"Songti SC","STSong","Noto Serif SC","SimSun",serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --kai:"Kaiti SC","STKaiti","KaiTi","FangSong",serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.95;font-size:16.5px}
+#progress{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--verm),#e0704a);width:0;z-index:99;transition:width .1s}
+.layout{display:flex;max-width:1240px;margin:0 auto;gap:0}
+nav.toc{width:264px;flex-shrink:0;position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;
+  padding:34px 10px 40px 22px;border-right:1px solid var(--line)}
+nav.toc .toc-head{font-family:var(--serif);font-weight:900;font-size:15px;letter-spacing:.14em;color:var(--verm);margin-bottom:14px;padding-left:10px}
+nav.toc a{display:block;padding:7px 10px;margin:2px 0;font-size:13.5px;color:var(--ink2);text-decoration:none;border-radius:8px;border-left:3px solid transparent;line-height:1.5}
+nav.toc a.toc-day{font-family:var(--serif);font-weight:900;color:var(--ink);font-size:14.5px;margin-top:14px}
+nav.toc a.toc-sec{padding-left:22px}
+nav.toc a:hover{background:var(--verm-soft);color:var(--verm)}
+nav.toc a.active{background:var(--verm-soft);border-left-color:var(--verm);color:var(--verm);font-weight:600}
+nav.toc .toc-cross-wrap{margin-top:26px;padding-top:16px;border-top:1px solid var(--line)}
+nav.toc .toc-cross{display:block;padding:8px 12px;font-size:13px;color:var(--ink2);text-decoration:none;border:1px dashed #d5c9b0;border-radius:8px;text-align:center;line-height:1.5}
+nav.toc .toc-cross:hover{color:var(--teal);border-color:var(--teal)}
+main{flex:1;min-width:0;padding:0 56px 120px}
+.hero{padding:84px 0 44px;border-bottom:3px double var(--line);margin-bottom:8px;position:relative}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:44px;line-height:1.3;letter-spacing:.02em}
+.hero h1::after{content:"";display:block;width:88px;height:6px;background:var(--verm);margin-top:22px}
+.hero .hero-sub{font-family:var(--serif);font-size:21px;color:var(--ink2);margin-top:24px;letter-spacing:.08em}
+.hero .chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.hero .chip{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 16px;font-size:13.5px}
+.hero .chip-k{color:var(--verm);font-weight:700;margin-right:8px}
+.hero .cross{margin-top:26px;font-size:14px}
+.hero .cross a{color:var(--teal);text-decoration:none;border-bottom:1.5px solid var(--teal);padding-bottom:1px}
+.day-banner{margin:74px -12px 30px;background:var(--ink);color:var(--paper);border-radius:14px;padding:26px 34px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.day-chip{background:var(--verm);color:#fff;font-family:var(--serif);font-weight:900;font-size:21px;padding:6px 20px;border-radius:8px;letter-spacing:.06em;flex-shrink:0}
+.day-title{font-family:var(--serif);font-weight:900;font-size:26px;letter-spacing:.03em}
+.day-banner.alt{background:linear-gradient(120deg,var(--teal),#0f4a42)}
+h2{font-family:var(--serif);font-weight:900;font-size:27px;margin:62px 0 22px;line-height:1.4}
+h3{font-family:var(--serif);font-weight:900;font-size:19.5px;margin:36px 0 14px;padding-left:14px;border-left:5px solid var(--verm)}
+p{margin:14px 0}
+strong{color:var(--ink)}
+code{background:var(--teal-soft);color:var(--teal);padding:2px 7px;border-radius:6px;font-size:.88em;font-family:"SF Mono",Menlo,Consolas,monospace}
+a{color:var(--verm)}
+ul,ol{margin:14px 0 14px 8px;padding-left:22px}
+li{margin:8px 0;padding-left:4px}
+ul li::marker{color:var(--verm)}
+ol li::marker{color:var(--verm);font-weight:700}
+.note{font-family:var(--kai);background:var(--verm-soft);border-left:5px solid var(--verm);border-radius:0 12px 12px 0;padding:16px 22px;margin:22px 0;font-size:17px;color:#6e3323;line-height:2}
+.goal{background:var(--teal-soft);border:1px solid #cfe2dd;border-radius:12px;padding:18px 22px 14px;margin:26px 0;position:relative}
+.goal p{margin:8px 0 6px}
+.summary{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px 12px;margin:30px 0 14px}
+.practice{background:var(--amber-soft);border:1.5px dashed #d8b36a;border-radius:12px;padding:18px 22px 14px;margin:22px 0 40px}
+.practice p{margin:8px 0 6px}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.22em;padding:3px 12px;border-radius:6px;color:#fff}
+.goal-tag{background:var(--teal)}
+.sum-tag{background:var(--ink2)}
+.prac-tag{background:var(--amber)}
+.table-wrap{overflow-x:auto;margin:22px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;background:var(--card);border-radius:10px;overflow:hidden}
+th{background:var(--ink);color:var(--paper);font-weight:600;padding:11px 14px;text-align:left;letter-spacing:.04em;white-space:nowrap}
+td{padding:10px 14px;border-top:1px solid var(--line);vertical-align:top;line-height:1.7}
+tbody tr:nth-child(even){background:var(--paper2)}
+tbody tr:hover{background:var(--verm-soft)}
+figure{margin:30px auto;text-align:center}
+figure img{max-width:100%;border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px}
+figcaption{font-size:13px;color:var(--ink2);margin-top:10px;letter-spacing:.05em}
+.footer{margin-top:90px;padding-top:26px;border-top:3px double var(--line);font-size:13px;color:var(--ink2);line-height:1.9}
+.footer p{margin:6px 0}
+#toTop{position:fixed;right:28px;bottom:32px;width:46px;height:46px;border-radius:50%;background:var(--ink);color:var(--paper);border:none;font-size:18px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s;z-index:50}
+#toTop.show{opacity:.85;pointer-events:auto}
+#tocToggle{display:none}
+@media(max-width:980px){
+  nav.toc{position:fixed;left:-300px;z-index:80;background:var(--paper);transition:left .3s;box-shadow:8px 0 30px rgba(0,0,0,.15);width:280px}
+  nav.toc.open{left:0}
+  main{padding:0 24px 100px}
+  #tocToggle{display:block;position:fixed;left:16px;top:14px;z-index:90;background:var(--verm);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:14px;cursor:pointer}
+  .hero h1{font-size:32px}
+}
+.page{display:none}
+.page.active{display:block}
+body.expand .page{display:block}
+body.read .hero{display:none}
+body.read.on-cover .hero{display:block}
+.pager{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;z-index:60}
+.pager button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 16px;font-size:14px;cursor:pointer;color:var(--ink);font-family:var(--sans)}
+.pager button:disabled{opacity:.35;cursor:default}
+.pager #modeBtn{border-color:var(--teal);color:var(--teal)}
+#pageInfo{font-size:13.5px;color:var(--ink2);min-width:120px;text-align:center}
+body.expand .pager-nav{display:none}
+@media print{nav.toc,#progress,#toTop,#tocToggle,.pager{display:none!important}.layout{display:block}main{padding:0}body{background:#fff}.page{display:block!important}body.read .hero{display:block!important}}
+
+.pagenav{display:flex;justify-content:space-between;gap:12px;margin-top:64px;padding-top:22px;border-top:3px double var(--line)}
+.pn{max-width:46%;font-size:14px;color:var(--ink2);text-decoration:none;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 16px;line-height:1.5}
+.pn:hover{color:var(--verm);border-color:var(--verm)}
+.pn .pn-k{display:block;font-size:12px;letter-spacing:.14em;color:var(--verm);margin-bottom:2px}
+.pn.next{margin-left:auto;text-align:right}
+main{padding-bottom:80px}
+</style>
+</head>
+<body>
+<button id="tocToggle">目录</button>
+<div class="layout">
+<nav class="toc" id="toc">
+  <div class="toc-head"><a href="index.html" style="text-decoration:none;color:inherit">WorkBuddy 小白教程</a></div>
+  <a class="toc-sec" href="index.html">写在前面：这份教程怎么用</a>
+<a class="toc-day" href="p02.html">第一部分 先把它用起来</a>
+<a class="toc-sec" href="p02.html">第 1 节 这个软件能帮你干什么</a>
+<a class="toc-sec" href="p03.html">第 2 节 安装和登录</a>
+<a class="toc-sec" href="p04.html">第 3 节 打开软件后，先问它一个问题</a>
+<a class="toc-sec" href="p05.html">第 4 节 第一次让它真干活</a>
+<a class="toc-sec" href="p06.html">第 5 节 怎么说话，它才听得懂</a>
+<a class="toc-day" href="p07.html">第二部分 逐个认识四件装备</a>
+<a class="toc-sec" href="p07.html">第 6 节 搞懂 Skill：给实习生一本工作手册</a>
+<a class="toc-sec" href="p08.html">第 7 节 搞懂专家：一个实习生不够时</a>
+<a class="toc-sec active" href="p09.html">第 8 节 搞懂连接器：绑定微信，手机上也能指挥它</a>
+<a class="toc-sec" href="p10.html">第 9 节 定时任务：让它每天准点自动干</a>
+<a class="toc-day" href="p11.html">附录：大白话术语表</a>
+<a class="toc-sec" href="p11.html">写在前面：实操篇怎么用</a>
+<a class="toc-day" href="p12.html">第三部分 办公实战</a>
+<a class="toc-sec" href="p12.html">第 1 节 ★ 把一堆发票变成报销台账</a>
+<a class="toc-sec" href="p13.html">第 2 节 ★★ 别怕 Excel：分析、算数、画图</a>
+<a class="toc-sec" href="p14.html">第 3 节 ★★ 快速出 Word 文档和 PPT</a>
+<a class="toc-sec" href="p15.html">第 4 节 ★★★ 开完会，纪要和待办自己出来</a>
+<a class="toc-day" href="p16.html">第四部分 信息、生活与远程</a>
+<a class="toc-sec" href="p16.html">第 5 节 ★ 每天早上，自动收到行业简报</a>
+<a class="toc-sec" href="p17.html">第 6 节 ★★ 把收藏整理成能再用起来的东西</a>
+<a class="toc-sec" href="p18.html">第 7 节 ★ 生活杂事：旅行、体检、比价</a>
+<a class="toc-sec" href="p19.html">第 8 节 ★★ 不在电脑前，也能让它干活</a>
+<a class="toc-day" href="p20.html">场景卡片：遇到这些活，照着来</a>
+<a class="toc-sec" href="p20.html">卡片 1：投资研究助手 ★★★</a>
+<a class="toc-sec" href="p21.html">卡片 2：AI 视频团队 ★★★</a>
+<a class="toc-sec" href="p22.html">卡片 3：自媒体增长闭环 ★★</a>
+<a class="toc-sec" href="p23.html">卡片 4：GEO 品牌诊断 ★★★</a>
+<a class="toc-sec" href="p24.html">卡片 5：把书和视频变成你自己的 Skill ★★★</a>
+<a class="toc-sec" href="p25.html">卡片 6：多 Agent 系统设计 ★★★</a>
+<a class="toc-sec" href="p26.html">卡片 7：让自动化更可靠 ★★★</a>
+<a class="toc-sec" href="p27.html">卡片 8：更多轻量玩法 ★</a>
+<a class="toc-sec" href="p28.html">卡片 9：接入自己的模型 ★★</a>
+<a class="toc-day" href="p29.html">附录</a>
+<a class="toc-sec" href="p29.html">附录一：六个常用指令模板（改名即用）</a>
+<a class="toc-sec" href="p30.html">附录二：我想干 XX，该用什么？</a>
+<a class="toc-sec" href="p31.html">附录三：不同岗位怎么用深（速览）</a>
+</nav>
+<main>
+  
+  <h2 id="p1-sec-9">第 8 节 搞懂连接器：绑定微信，手机上也能指挥它</h2>
+<div class="goal"><span class="tag goal-tag">学习目标</span><p>把微信和 WorkBuddy 绑在一起，从此人在外面，也能用手机派活、随时看电脑干到哪了。</p></div>
+<p>连接器，说得最直白：<strong>就是把你平时用的聊天软件，和 WorkBuddy 绑定起来</strong>。目前能绑的有微信、飞书、钉钉，还有 QQ 邮箱、腾讯会议这些办公系统。</p>
+<p>绑定之后，你会得到两个很实在的能力：</p>
+<ol><li><strong>人在外面，也能用手机派活</strong>——微信里发一句话，家里的电脑就开始干活；</li><li><strong>人在外面，也能知道电脑在干嘛</strong>——任务干到哪一步、结果是什么，都会发回你的手机。</li></ol>
+<h3>先绑微信：扫个码就行（最简单，先做这个）</h3>
+<p>在软件左侧"助理"栏进设置 → 找到"微信助理集成"点配置 → 用微信扫一扫二维码 → 显示"已绑定"就成功了。</p>
+<figure><img src="images/p1-25-wechat-bind.png" alt="微信扫码绑定" loading="lazy"><figcaption>微信扫码绑定</figcaption></figure>
+<p>绑好之后，你在微信里给它发消息，就等于给电脑前的实习生派活；它干完把结果发回你手机。<strong>人在外面，临时要电脑里的一份文件？发条消息让它找出来发给你就行。</strong></p>
+<h3>手机上用的时候，分清两种模式</h3>
+<figure><img src="images/p1-24-miniprogram.png" alt="小程序两种模式" loading="lazy"><figcaption>小程序两种模式</figcaption></figure>
+<div class="table-wrap"><table>
+<thead><tr><th>模式</th><th>活在哪干</th><th>电脑要不要开着</th><th>适合干什么</th></tr></thead>
+<tbody>
+<tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td><strong>本机模式</strong></td><td>你自己电脑上</td><td>要开着、要联网</td><td>处理电脑里的文件、用你装的 Skill</td></tr>
+<tr><td><strong>云端模式</strong></td><td>网上的临时环境</td><td>不用</td><td>查资料、写东西等不碰本地文件的活</td></tr>
+</tbody></table></div>
+<p>记一句话就行：<strong>要动你自己电脑里的文件，电脑就得开着。</strong></p>
+<h3>飞书、钉钉也能绑（步骤多一些）</h3>
+<p>这两个需要去它们的开放平台建个应用再对接，步骤不少。如果你公司用飞书或钉钉，找一个懂这类操作的同事帮忙弄；不急的话，这一小节整个跳过也不影响后面学习。</p>
+<h3>绑上腾讯会议这类系统，还能让它"办事"</h3>
+<p>除了聊天软件，连接器也能连腾讯会议、QQ 邮箱这类系统。连上之后直接派活，比如："帮我创建一个明天下午 3 点的会议，主题'项目讨论'，一小时。"它会先把准备创建的会议信息报给你看，你确认了才真的建。</p>
+<figure><img src="images/p1-22-connector-list.png" alt="连接器列表" loading="lazy"><figcaption>连接器列表</figcaption></figure>
+<figure><img src="images/p1-23-meeting-created.png" alt="会议创建成功" loading="lazy"><figcaption>会议创建成功</figcaption></figure>
+<p>（这类"连外部系统"的技术有个名字叫 MCP，你不需要记，知道连接器就是它的入口即可。）</p>
+<div class="summary"><span class="tag sum-tag">本节小结</span>
+<ul><li>连接器 = 把微信、飞书、腾讯会议这些常用软件绑定到 WorkBuddy；</li><li>绑上之后：人在外面也能用手机派活、随时看电脑干到哪；</li><li>微信绑定时扫个码就行；飞书、钉钉步骤多，可以以后再弄；</li><li>要动电脑里的文件，电脑必须开机联网（本机模式）。</li></ul>
+</div>
+<div class="practice"><span class="tag prac-tag">动手练习</span><p>绑定微信助理，从手机上给它发一条只读的指令试试，比如"看看桌面上有哪些文件，列给我"。</p></div>
+
+  <div class="pagenav"><a class="pn prev" href="p08.html"><span class="pn-k">上一节</span>第 7 节 搞懂专家：一个实习生不够时</a><a class="pn next" href="p10.html"><span class="pn-k">下一节</span>第 9 节 定时任务：让它每天准点自动干</a></div>
+  <footer class="footer">
+    <p>本教程基于开源的《WorkBuddy 实战蓝皮书》（workbuddy.homes/bluebook · GitHub: AlephAITech/WorkBuddyGuide · MIT License · © 2026 WorkBuddy Guide Contributors）精编改写，文字面向零基础读者重写，截图引用自原书。</p>
+    <p>内容自足，无需另查原书。建议与上机实操或培训演示配合使用。</p>
+  </footer>
+</main>
+</div>
+<button id="toTop" title="回到顶部">↑</button>
+<script>
+(function(){
+  var top=document.getElementById('toTop'),tg=document.getElementById('tocToggle'),toc=document.getElementById('toc');
+  try{
+    var K='wb-toc-scroll',saved=sessionStorage.getItem(K);
+    if(saved)toc.scrollTop=parseInt(saved,10)||0;
+    toc.addEventListener('scroll',function(){sessionStorage.setItem(K,toc.scrollTop);},{passive:true});
+  }catch(e){}
+  function onScroll(){top.classList.toggle('show',document.documentElement.scrollTop>600);}
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+  top.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+  tg.onclick=function(e){e.stopPropagation();toc.classList.toggle('open');};
+  document.addEventListener('click',function(e){if(!toc.contains(e.target))toc.classList.remove('open');});
+})();
+</script>
+</body>
+</html>
